@@ -1,4 +1,49 @@
 /* Your Code Here */
+const createEmployeeRecord = array => {
+    return {
+        firstName: array[0],
+        familyName: array[1],
+        title: array[2],
+        payPerHour: array[3],
+        timeInEvents: [],
+        timeOutEvents: [],
+    }
+}
+
+const createEmployeeRecords = arrays => {
+    return arrays.map(array => createEmployeeRecord(array))
+}
+
+function createTimeInEvent(dateStamp) {
+    let [date, hour] = dateStamp.split(' ')
+    this.timeInEvents.push({
+        type: 'TimeIn',
+        hour: parseInt(hour, 10),
+        date: date
+    })
+    return this
+}
+
+function createTimeOutEvent(dateStamp) {
+    let [date, hour] = dateStamp.split(' ')
+    this.timeOutEvents.push({
+        type: 'TimeOut',
+        hour: parseInt(hour, 10),
+        date: date
+    })
+    return this
+}
+
+function hoursWorkedOnDate(date) {
+    let inTime = this.timeInEvents.find(element => element.date === date)
+    let outTime = this.timeOutEvents.find(element => element.date === date)
+    return (outTime.hour - inTime.hour) / 100
+}
+
+function wagesEarnedOnDate(date) {
+    let wages = hoursWorkedOnDate.call(this, date) * this.payPerHour
+    return parseFloat(wages.toString())
+}
 
 /*
  We're giving you this function. Take a look at it, you might see some usage
@@ -10,14 +55,21 @@
  */
 
 const allWagesFor = function () {
-    const eligibleDates = this.timeInEvents.map(function (e) {
+    let eligibleDates = this.timeInEvents.map(function (e) {
         return e.date
     })
 
-    const payable = eligibleDates.reduce(function (memo, d) {
+    let payable = eligibleDates.reduce(function (memo, d) {
         return memo + wagesEarnedOnDate.call(this, d)
     }.bind(this), 0) // <== Hm, why did we need to add bind() there? We'll discuss soon!
 
     return payable
 }
 
+function findEmployeeByFirstName(srcArray, firstName) {
+    return srcArray.find(record => record.firstName === firstName)
+}
+
+function calculatePayroll(array) {
+    return array.reduce(((acc, employeeData) => acc + allWagesFor.call(employeeData)), 0)
+}
